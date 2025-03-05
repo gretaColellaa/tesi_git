@@ -44,16 +44,17 @@ def assegnazioni():
     sov = ControlloSovrapposizione(primaAssegnazione)
     nuoveAssegnazioni = primaAssegnazione
     while sov != []:
+        i=0
         for s in sov:
             r = s[0]
             a = s[1]
             nuoveAule = aulePossibiliCapienza(r[0])
             nuoveAule.remove(a) #rimuove aula in quanro non più possibile 
-            nuoveAssegnazioni.remove[s] #rimuove vecchia assegnazione
+            nuoveAssegnazioni.remove[sov[i]] #rimuove vecchia assegnazione
             nuovaAula = nuoveAule[0]
             nuoveAssegnazioni.append([s[0], nuovaAula])
             ControlloSovrapposizione(nuoveAssegnazioni)
-
+            i +=1
     return nuoveAssegnazioni
 
     
