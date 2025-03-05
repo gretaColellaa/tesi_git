@@ -1,0 +1,8 @@
+algoritmo che serve a gestire delle richieste (con dei requisiti) da parte di PROFESSORI per le AULE che gli serviranno nel semestre successivo
+
+devo fare delle funzioni che mi permettano di assegnare le aule adatte senza sovrapposizioni
+
+- funzione che trova la richiesta
+- funzione che associa le aule possibili alla richiesta
+- funzione che asssegna l'aula senza sovrapposizioni
+- funzione che 
