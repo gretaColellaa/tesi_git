@@ -25,7 +25,7 @@ aule = [
 ]
 
 
-assegnazioniTemporanee = []
+"""assegnazioniTemporanee = []
 # Verifica delle aule possibili per ogni richiesta in termini di capienza
 for r in richieste:
     aulePossibili = []
@@ -58,4 +58,4 @@ while sov == True:
                             assegnazioniTemporanee.append(NuovaAssegnazione)
                             sovrapposizione = False
 
-    sov = sovrapposizione
+    sov = sovrapposizione"""

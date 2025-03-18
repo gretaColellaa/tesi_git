@@ -20,7 +20,6 @@ def trovaRichiesta(id):
             return r
         
 
-
 def aulePossibiliCapienza(idR): #restituisce lista di aule possibili per capienza per una richiesta in ordine crescente
     aulePossibili = []
     r = trovaRichiesta(idR)
@@ -83,3 +82,5 @@ def ControlloSovrapposizione(assegnazioni): #da una lista di liste-assegnazioni 
         
 
 print(assegnazioni())
+
+
