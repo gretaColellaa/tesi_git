@@ -19,28 +19,28 @@ class Professore:
 
 
 class Richiesta:
-    def __init__(self, id_richiesta, id_prof, capienza_richiesta, slot_ids):
+    def __init__(self, id_richiesta, id_prof, capienza_richiesta, slotIds):
         """
         slot_ids: lista di ID degli slot richiesti (es. [2, 3, 4] se serve un blocco di 3 slot)
         """
         self.id_richiesta = id_richiesta
         self.id_prof = id_prof
         self.capienza_richiesta = capienza_richiesta
-        self.slot_ids = slot_ids  # ad es. [2, 3] se occupa due fasce orarie
+        self.slotIds = slotIds  # ad es. [2, 3] se occupa due fasce orarie
 
     def __str__(self):
         return (f"Richiesta {self.id_richiesta} di Prof. {self.id_prof}, "
-                f"capienza: {self.capienza_richiesta}, slot_ids: {self.slot_ids}")
+                f"capienza: {self.capienza_richiesta}, slot_ids: {self.slotIds}")
 
 
 
 class Slot:
-    def __init__(self, id_slot, giorno, ora_inizio, ora_fine):
-        self.id_slot = id_slot
+    def __init__(self, idSlot, giorno, ora_inizio, ora_fine):
+        self.idSlot = idSlot
         self.giorno = giorno
         self.ora_inizio = ora_inizio
         self.ora_fine = ora_fine
 
     def __str__(self):
-        return (f"Slot {self.id_slot} - {self.giorno} "
+        return (f"Slot {self.idSlot} - {self.giorno} "
                 f"{self.ora_inizio}-{self.ora_fine}")

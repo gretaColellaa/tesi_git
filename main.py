@@ -54,7 +54,7 @@ def main():
     # 6. Stampa i risultati
     for richiesta in richieste:
         aula_ass = assegnazioni[richiesta.id_richiesta]
-        print(f"Richiesta {richiesta.id_richiesta} (cap={richiesta.capienza_richiesta}, slot={richiesta.slot_ids}) -> {aula_ass}")
+        print(f"Richiesta {richiesta.id_richiesta} (cap={richiesta.capienza_richiesta}, slot={richiesta.slotIds}) -> {aula_ass}")
 
 if __name__ == "__main__":
     main()

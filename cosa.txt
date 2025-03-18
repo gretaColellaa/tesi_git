@@ -5,4 +5,3 @@ devo fare delle funzioni che mi permettano di assegnare le aule adatte senza sov
 - funzione che trova la richiesta
 - funzione che associa le aule possibili alla richiesta
 - funzione che asssegna l'aula senza sovrapposizioni
-- funzione che 

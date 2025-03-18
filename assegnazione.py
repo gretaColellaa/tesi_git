@@ -25,11 +25,11 @@ def assegna_aule_multi_slot(richieste, aule, slots):
     # 2. Ordina le aule per capienza crescente
     aule_ordinate = sorted(aule, key=lambda a: a.capienza)
     
-    # 3. Inizializza disponibilità per (aula, slot)
+    # 3. Inizializza disponibilità per (aula, slot) =  chiave
     disponibilita = {}
     for aula in aule_ordinate:
         for slot in slots:
-            disponibilita[(aula.id_aula, slot.id_slot)] = True #chiave del dizionario sono idaula, idslot
+            disponibilita[(aula.id_aula, slot.idSlot)] = True #chiave del dizionario sono idaula, idslot
     
     # 4. Dizionario dei risultati
     assegnazioni = {}
@@ -43,7 +43,7 @@ def assegna_aule_multi_slot(richieste, aule, slots):
             if aula.capienza >= richiesta.capienza_richiesta:
                 # Controlliamo che TUTTI gli slot della richiesta siano disponibili per questa aula
                 tutti_slot_liberi = True
-                for id_slot_richiesto in richiesta.slot_ids:
+                for id_slot_richiesto in richiesta.slotIds:
                     if not disponibilita[(aula.id_aula, id_slot_richiesto)]:
                         tutti_slot_liberi = False
                         break
@@ -56,7 +56,7 @@ def assegna_aule_multi_slot(richieste, aule, slots):
         # Se abbiamo trovato un'aula disponibile, la assegniamo e impostiamo la disponibilità a False
         if aula_trovata:
             assegnazioni[richiesta.id_richiesta] = aula_trovata.id_aula
-            for id_slot_richiesto in richiesta.slot_ids:
+            for id_slot_richiesto in richiesta.slotIds:
                 disponibilita[(aula_trovata.id_aula, id_slot_richiesto)] = False
         else:
             # Nessuna aula adatta
