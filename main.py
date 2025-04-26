@@ -1,4 +1,4 @@
-from models import Aula, Professore, Richiesta, Slot
+from models import Aula, User, Richiesta, Slot
 import assegnazione as ass
 
 def main():
@@ -32,8 +32,8 @@ def main():
     
     # 3. Creiamo professori (opzionale ai fini della logica)
     professori = [
-        Professore(101, "Mario", "Rossi", "m.rossi@example.com", "pwd1"),
-        Professore(102, "Luca", "Bianchi", "l.bianchi@example.com", "pwd2"),
+        User(101, "Mario", "Rossi", "m.rossi@example.com", "pwd1"),
+        User(102, "Luca", "Bianchi", "l.bianchi@example.com", "pwd2"),
     ]
     
     # 4. Creiamo richieste con liste di slot

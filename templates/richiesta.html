@@ -1,11 +1,11 @@
-
 {% extends "base.html" %}
 
 {% block title %}Richiesta Aula{% endblock %}
 
 {% block content %}
+
 <div class="row justify-content-center">
-    <div class="col-md-6">
+    <div class="col-md-8">
         <div class="card shadow-sm">
             <div class="card-header text-center">
                 <h3>Richiedi un'aula</h3>
@@ -20,52 +20,38 @@
                         <input type="number" class="form-control" id="capienza" name="capienza" min="1" required>
                     </div>
 
-                    <!-- Selezione giorno della settimana -->
+                    <!-- Slot orari per ogni giorno -->
                     <div class="mb-3">
-                        <label for="giorno" class="form-label">Giorno della settimana</label>
-                        <select class="form-select" id="giorno" name="giorno" required>
-                            <option value="" selected disabled>Seleziona un giorno</option>
-                            <option value="Lunedì">Lunedì</option>
-                            <option value="Martedì">Martedì</option>
-                            <option value="Mercoledì">Mercoledì</option>
-                            <option value="Giovedì">Giovedì</option>
-                            <option value="Venerdì">Venerdì</option>
-                            <option value="Sabato">Sabato</option>
-                            <option value="Domenica">Domenica</option>
-                        </select>
-                    </div>
+                        <label class="form-label">Seleziona gli slot per ciascun giorno</label>
 
-                    <!-- Checkbox per gli slot orari -->
-                    <div class="mb-3 d-none" id="slot-container">
-                        <label class="form-label">Seleziona gli slot orari</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="slot" value="08:30-10:00" id="slot1">
-                            <label class="form-check-label" for="slot1">08:30 - 10:00</label>
+                        {% set giorni = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì"] %}
+                        {% set fasce = [
+                            ("08:30", "10:00"),
+                            ("10:00", "11:30"),
+                            ("11:30", "13:00"),
+                            ("13:00", "14:30"),
+                            ("14:30", "16:00"),
+                            ("16:00", "17:30"),
+                            ("17:30", "19:00")
+                        ] %}
+
+                        {% for giorno in giorni %}
+                        <div class="card mb-2">
+                            <div class="card-header fw-bold">{{ giorno }}</div>
+                            <div class="card-body">
+                                {% for fascia in fasce %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="slot" 
+                                           value="{{ giorno }}_{{ fascia[0] }}-{{ fascia[1] }}" 
+                                           id="{{ giorno }}_slot{{ loop.index0 }}">
+                                    <label class="form-check-label" for="{{ giorno }}_slot{{ loop.index0 }}">
+                                        {{ fascia[0] }} - {{ fascia[1] }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="slot" value="10:00-11:30" id="slot2">
-                            <label class="form-check-label" for="slot2">10:00 - 11:30</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="slot" value="11:30-13:00" id="slot3">
-                            <label class="form-check-label" for="slot3">11:30 - 13:00</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="slot" value="13:00-14:30" id="slot4">
-                            <label class="form-check-label" for="slot4">13:00 - 14:30</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="slot" value="14:30-16:00" id="slot5">
-                            <label class="form-check-label" for="slot5">14:30 - 16:00</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="slot" value="16:00-17:30" id="slot6">
-                            <label class="form-check-label" for="slot6">16:00 - 17:30</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="slot" value="17:30-19:00" id="slot7">
-                            <label class="form-check-label" for="slot7">17:30 - 19:00</label>
-                        </div>
+                        {% endfor %}
                     </div>
 
                     <!-- Pulsante di invio -->
@@ -76,13 +62,4 @@
     </div>
 </div>
 
-<!-- Script per mostrare gli slot dopo selezione del giorno -->
-<script>
-    document.getElementById("giorno").addEventListener("change", function() {
-        document.getElementById("slot-container").classList.remove("d-none");
-    });
-</script>
 {% endblock %}
-
-
-
