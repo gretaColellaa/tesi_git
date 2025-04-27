@@ -5,3 +5,29 @@ devo fare delle funzioni che mi permettano di assegnare le aule adatte senza sov
 - funzione che trova la richiesta
 - funzione che associa le aule possibili alla richiesta
 - funzione che asssegna l'aula senza sovrapposizioni
+
+
+
+
+- **Priorità:** assegnare prima chi ha meno alternative di aule/slot.
+- **Riassegnazione dinamica:** se una nuova richiesta non trova aula libera, proviamo a **spostare** assegnazioni precedenti se così si riescono a soddisfare **più richieste**.
+- **Ottimizzazione capienza:** scegliere sempre l'aula più "su misura" possibile, senza sprecare grandi aule se non serve.
+- **Motivazioni:** tracciamo *perché* una richiesta non viene soddisfatta.
+
+---
+
+**Come lo strutturiamo?**
+strategia **a livelli**:
+
+1. **Precalcolo alternative**: per ogni richiesta, vediamo quante aule *possibili* ci sono.
+2. **Ordinamento intelligente**: assegnare prima richieste "critiche" (meno alternative).
+3. **Assegnazione + Riassegnazione dinamica**:  
+   - Se la richiesta corrente non trova subito spazio, provo a **liberare** aule spostando altre richieste meno critiche.
+4. **Risultato finale**: massimo numero di richieste assegnate, motivazioni tracciate.
+
+---
+
+**Tecnica principale che useremo:**  
+🧠 **Backtracking intelligente** (non su tutto, solo locale: provo a spostare *1 o 2* assegnazioni, non faccio esplorazione esaustiva).
+
+---

@@ -14,7 +14,7 @@ def get_richieste():
 
     return richieste
 
-def get_richieste_by_id(id):
+def get_richiesta_by_id(id):
     conn = sqlite3.connect('db/assegnaAule.db')
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()

@@ -54,3 +54,21 @@ def get_descrizione_slot_by_ids(slot_ids):
             ora_fine = slot['ora_fine']
             descrizioni.append(f"{giorno} {ora_inizio}-{ora_fine}")
     return ", ".join(descrizioni)
+
+
+def get_all_slots():
+    """
+    Restituisce tutti gli slot esistenti nel database.
+    """
+    conn = sqlite3.connect('db/assegnaAule.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    sql = 'SELECT * FROM slot'
+    cursor.execute(sql)
+    slots = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return slots

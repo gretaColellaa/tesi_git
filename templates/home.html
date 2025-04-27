@@ -1,37 +1,48 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
-{% block home_active %}active{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-header text-center">
-                <h3>Accedi</h3>
-            </div>
-            <div class="card-body">
-                <form method="POST" action="/login">
-                    <!-- Protezione CSRF (se usi Flask-WTF) -->
-                    {{ form.hidden_tag() if form else '' }}
-                    
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
+<div class="container">
+    {% if current_user.is_authenticated %}
+    <div class="home-dashboard">
+        <h2>Benvenuto {{ current_user.nome }}!</h2>
+        <p class="lead">Cosa vuoi fare?</p>
+    
+        <a href="{{ url_for('richiesta') }}" class="btn btn-primary">Fai una Nuova Richiesta</a>
+        <a href="{{ url_for('myaccount') }}" class="btn btn-secondary">Visualizza le Tue Richieste</a>
+        <a href="{{ url_for('logout') }}" class="btn btn-danger">Esci</a>
+    </div>
+    
+    {% else %}
+        <div class="row justify-content-center my-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h3>Accedi</h3>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="/login">
+                            {{ form.hidden_tag() if form else '' }}
+                            
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                            </div>
 
-                    <button type="submit" class="btn btn-primary w-100">Accedi</button>
-                </form>
-            </div>
-            <div class="card-footer text-center">
-                <p>Non hai un account? <a href="{{ url_for('signup') }}">Registrati</a></p>
+                            <button type="submit" class="btn btn-primary w-100">Accedi</button>
+                        </form>
+                    </div>
+                    <div class="card-footer text-center">
+                        <p>Non hai un account? <a href="{{ url_for('signup') }}">Registrati</a></p>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 </div>
-
 {% endblock %}

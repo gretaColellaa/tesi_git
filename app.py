@@ -10,6 +10,9 @@ import users_dao, richieste_dao, aule_dao, slot_dao
 from models import Aula, User, Richiesta, Slot
 
 from datetime import datetime
+from assegnazione_avanzata import assegna_aule_avanzato  
+
+import assegnazione_dao  
 
 
 
@@ -150,6 +153,76 @@ def myaccount():
         richieste_con_descrizione.append(richiesta_obj)
 
     return render_template('myaccount.html', richieste=richieste_con_descrizione)
+
+
+
+@app.route('/assegna_aule')
+@login_required
+def assegna_aule():
+    # Recupera dati
+    richieste_rows = richieste_dao.get_richieste()
+    aule_rows = aule_dao.get_aule()
+    slots_rows = slot_dao.get_all_slots()
+
+    richieste = []
+    for r in richieste_rows:
+        slot_ids = [int(s) for s in r['slots'].split(',')] if r['slots'] else []
+        richieste.append(Richiesta(id=r['id'], id_prof=r['idProf'], capienza_richiesta=r['capienza'], slotIds=slot_ids))
+
+    aule = []
+    for a in aule_rows:
+        aule.append(Aula(id_aula=a['id'], capienza=a['capienza']))
+
+    slots = []
+    for s in slots_rows:
+        slots.append(Slot(id=s['id'], giorno=s['giorno'], ora_inizio=s['ora_inizio'], ora_fine=s['ora_fine']))
+
+    # Esegui l'assegnazione avanzata
+    assegnazioni, motivazioni = assegna_aule_avanzato(richieste, aule, slots)
+
+    # Pulisce vecchie assegnazioni
+    assegnazione_dao.elimina_tutte_assegnazioni()
+
+    # Salva nuove assegnazioni
+    for id_richiesta, id_aula in assegnazioni.items():
+        if id_aula:  # Solo quelle andate a buon fine
+            assegnazione_dao.salva_assegnazione(id_richiesta, id_aula)
+
+    # Prepara risultati da mostrare
+    risultati = []
+    for richiesta in richieste:
+        risultati.append({
+            'id_richiesta': richiesta.id,
+            'aula_assegnata': assegnazioni.get(richiesta.id),
+            'motivazione': motivazioni.get(richiesta.id)
+        })
+
+    return render_template('assegna_aule.html', risultati=risultati)
+
+@app.route('/visualizza_assegnazioni')
+@login_required
+def visualizza_assegnazioni():
+    # Recupera tutte le assegnazioni salvate
+    assegnazioni_rows = assegnazione_dao.get_assegnazioni()
+    
+    risultati = []
+    for row in assegnazioni_rows:
+        richiesta = richieste_dao.get_richiesta_by_id(row['id_richiesta'])
+        aula = aule_dao.get_aula_by_id(row['id_aula'])
+        
+        slot_ids = [int(s) for s in richiesta['slots'].split(',')] if richiesta and richiesta['slots'] else []
+        descrizione_slots = slot_dao.get_descrizione_slot_by_ids(slot_ids) if slot_ids else "N/A"
+
+        risultati.append({
+            'professore': richiesta['idProf'] if richiesta else "?",  # oppure potremmo anche prendere nome/cognome con join
+            'capienza_richiesta': richiesta['capienza'] if richiesta else "N/A",
+            'aula': aula['id'] if aula else "N/A",
+            'capienza_aula': aula['capienza'] if aula else "N/A",
+            'slot_descrizione': descrizione_slots
+        })
+
+    return render_template('visualizza_assegnazioni.html', risultati=risultati)
+
 
 
 if __name__ == '__main__':
