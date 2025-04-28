@@ -2,32 +2,26 @@ algoritmo che serve a gestire delle richieste (con dei requisiti) da parte di PR
 
 devo fare delle funzioni che mi permettano di assegnare le aule adatte senza sovrapposizioni
 
-- funzione che trova la richiesta
-- funzione che associa le aule possibili alla richiesta
-- funzione che asssegna l'aula senza sovrapposizioni
+
+- Priorità: assegnare prima chi ha meno alternative di aule/slot.
+- Riassegnazione dinamica: se una nuova richiesta non trova aula libera, proviamo a spostare assegnazioni precedenti se così si riescono a soddisfare più richieste.
+- Ottimizzazione capienza: scegliere sempre l'aula più "su misura" possibile, senza sprecare grandi aule se non serve.
+- Motivazioni: tracciamo se l'assegnazione avviene o in caso contrario il perché una richiesta non viene soddisfatta.
+
+strategia a livelli:
+
+1. Precalcolo alternative: per ogni richiesta, vediamo quante aule possibili ci sono.
+2. Ordinamento intelligente: assegnare prima richieste "critiche" (meno alternative).
+3. Assegnazione + Riassegnazione dinamica:  
+   - Se la richiesta corrente non trova subito spazio, provo a liberare aule spostando altre richieste meno critiche.
+4. Risultato finale: massimo numero di richieste assegnate, motivazioni tracciate.
 
 
+to do:
 
+-permettere solo ad un admin di assegnare le aule
+-permettere ai professori di visionare solo quello che li riguarda
+-permettere ai professori di accettare una sistemazione, e solo dopo confermarla (non lo so ????)
+-aggiungere delle caratteristiche alle aule (prese, lavagna, proiettore, computer ecc...)
+-ogni richiesta potrebbe considerare più aule in slot diversi
 
-- **Priorità:** assegnare prima chi ha meno alternative di aule/slot.
-- **Riassegnazione dinamica:** se una nuova richiesta non trova aula libera, proviamo a **spostare** assegnazioni precedenti se così si riescono a soddisfare **più richieste**.
-- **Ottimizzazione capienza:** scegliere sempre l'aula più "su misura" possibile, senza sprecare grandi aule se non serve.
-- **Motivazioni:** tracciamo *perché* una richiesta non viene soddisfatta.
-
----
-
-**Come lo strutturiamo?**
-strategia **a livelli**:
-
-1. **Precalcolo alternative**: per ogni richiesta, vediamo quante aule *possibili* ci sono.
-2. **Ordinamento intelligente**: assegnare prima richieste "critiche" (meno alternative).
-3. **Assegnazione + Riassegnazione dinamica**:  
-   - Se la richiesta corrente non trova subito spazio, provo a **liberare** aule spostando altre richieste meno critiche.
-4. **Risultato finale**: massimo numero di richieste assegnate, motivazioni tracciate.
-
----
-
-**Tecnica principale che useremo:**  
-🧠 **Backtracking intelligente** (non su tutto, solo locale: provo a spostare *1 o 2* assegnazioni, non faccio esplorazione esaustiva).
-
----

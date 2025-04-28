@@ -32,9 +32,9 @@ def assegna_aule_avanzato(richieste, aule, slots):
                 # Controlla se è libera su tutti gli slot richiesti
                 if all(disponibilita[(aula.id_aula, id_slot)] for id_slot in richiesta.slotIds):
                     alternative += 1
-        alternative_per_richiesta[richiesta.id] = alternative
+        alternative_per_richiesta[richiesta.id] = alternative #memorizza quante alternative ci sono per una richiesta
 
-    # 3. Ordina richieste: prima chi ha meno alternative
+    # 3. Ordina richieste: prima chi ha meno alternative, a parità di alternative chi chiede meno posti
     richieste_ordinate = sorted(richieste, key=lambda r: (alternative_per_richiesta[r.id], r.capienza_richiesta))
 
     # 4. Prepara struttura di assegnazione
@@ -45,12 +45,12 @@ def assegna_aule_avanzato(richieste, aule, slots):
     for richiesta in richieste_ordinate:
         aula_trovata = None
         # Ordina aule per capienza crescente
-        aule_ordinate = sorted(aule, key=lambda a: a.capienza)
+        aule_ordinate = sorted(aule, key=lambda a: a.capienza) 
 
         for aula in aule_ordinate:
             if aula.capienza >= richiesta.capienza_richiesta:
-                # Controlla disponibilità su tutti gli slot
-                if all(disponibilita[(aula.id_aula, id_slot)] for id_slot in richiesta.slotIds):
+                # Controlla disponibilità dell'aula su tutti gli slot
+                if all(disponibilita[(aula.id_aula, id_slot)] for id_slot in richiesta.slotIds): #se sono tutti True, ritorna True
                     aula_trovata = aula
                     break
 
@@ -103,20 +103,21 @@ def tenta_riassegnazione(richiesta_corrente, assegnazioni, disponibilita, richie
         richieste_bloccanti = []
         for id_slot in slot_bloccanti:
             for r in richieste:
-                if assegnazioni.get(r.id) == aula.id_aula and id_slot in r.slotIds:
+                if assegnazioni.get(r.id) == aula.id_aula and id_slot in r.slotIds: #Controlla se la richiesta r è stata assegnata a questa aula, 
+                                                                                    #e se lo slot che sto guardando è uno di quelli richiesti da r.
                     richieste_bloccanti.append(r)
 
         # Prova a spostare la richiesta bloccante su un'altra aula
         for richiesta_bloccante in richieste_bloccanti:
             # Prova a riassegnare la richiesta bloccante
-            nuovo_aula_per_bloccante = trova_nuova_aula(richiesta_bloccante, disponibilita, aule)
-            if nuovo_aula_per_bloccante:
+            nuova_aula_per_bloccante = trova_nuova_aula(richiesta_bloccante, disponibilita, aule)
+            if nuova_aula_per_bloccante:
                 # Sposta la richiesta bloccante
                 vecchia_aula = assegnazioni[richiesta_bloccante.id]
-                assegnazioni[richiesta_bloccante.id] = nuovo_aula_per_bloccante.id_aula
+                assegnazioni[richiesta_bloccante.id] = nuova_aula_per_bloccante.id_aula
                 for id_slot in richiesta_bloccante.slotIds:
-                    disponibilita[(vecchia_aula, id_slot)] = True
-                    disponibilita[(nuovo_aula_per_bloccante.id_aula, id_slot)] = False
+                    disponibilita[(vecchia_aula, id_slot)] = True #libero lo slot della vecchia aula
+                    disponibilita[(nuova_aula_per_bloccante.id_aula, id_slot)] = False #occupo lo slot della nuova aula
 
                 # Ora aula libera --> assegna la nuova richiesta
                 assegnazioni[richiesta_corrente.id] = aula.id_aula

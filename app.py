@@ -164,7 +164,7 @@ def assegna_aule():
     aule_rows = aule_dao.get_aule()
     slots_rows = slot_dao.get_all_slots()
 
-    richieste = []
+    richieste = [] #lista di oggetti di classe Richiesta
     for r in richieste_rows:
         slot_ids = [int(s) for s in r['slots'].split(',')] if r['slots'] else []
         richieste.append(Richiesta(id=r['id'], id_prof=r['idProf'], capienza_richiesta=r['capienza'], slotIds=slot_ids))
