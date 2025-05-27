@@ -214,7 +214,7 @@ def visualizza_assegnazioni():
         descrizione_slots = slot_dao.get_descrizione_slot_by_ids(slot_ids) if slot_ids else "N/A"
 
         risultati.append({
-            'professore': richiesta['idProf'] if richiesta else "?",  # oppure potremmo anche prendere nome/cognome con join
+            'professore': richiesta['idProf'] if richiesta else "?",  
             'capienza_richiesta': richiesta['capienza'] if richiesta else "N/A",
             'aula': aula['id'] if aula else "N/A",
             'capienza_aula': aula['capienza'] if aula else "N/A",
