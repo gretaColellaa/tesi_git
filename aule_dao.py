@@ -6,7 +6,7 @@ def get_aule():
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
-    sql = 'SELECT id, capienza FROM aula'
+    sql = 'SELECT * FROM aula'
     cursor.execute(sql)
     aule = cursor.fetchall()
 

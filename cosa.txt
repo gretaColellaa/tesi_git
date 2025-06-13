@@ -19,17 +19,17 @@ strategia a livelli:
 
 to do:
 
--permettere solo ad un admin di assegnare le aule
+-permettere solo ad un admin di assegnare le aule OK
 -permettere ai professori di visionare le loro assegnazioni sulla pagina del profilo
--permettere ai professori di accettare una sistemazione, e solo dopo confermarla (non lo so ????)
--aggiungere delle caratteristiche alle aule (prese, lavagna, proiettore, computer ecc...)
--ogni richiesta potrebbe considerare più aule in slot diversi
+
+-aggiungere delle caratteristiche alle aule (prese, lavagna, proiettore, computer ecc...) OK
+-ogni richiesta potrebbe considerare più aule in slot diversi OK
 
 l'utente fa "un'unica" richiesta tramite l'interfaccia, il database memorizza richieste separate per ogni giorno della settimana selezionato
 ogni richiesta si riferisce quindi ad un giorno della settimana, e può includere diversi slot all'interno di quel giorno.
 l'algoritmo assegnando un'aula per ogni richiesta in questo modo associa un aula per ogni giorno che comprende la richiesta
 
-la richiesta include come attributo il giorno, per cui non serve più nello slot. gli slot diventano 7 e non 35.
+la richiesta include come attributo il giorno, per cui non serve più nello slot. gli slot diventano 7 e non 35. OK
 
--scegliere il titolo per la tesi 
+-scegliere il titolo per la tesi OK
 

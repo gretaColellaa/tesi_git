@@ -7,10 +7,10 @@
 <div class="row justify-content-center">
     <div class="col-md-8">
         <div class="card shadow-sm">
-            <div class="card-header text-center">
+            <div id = "form" class="card-header text-center">
                 <h3>Richiedi un'aula</h3>
             </div>
-            <div class="card-body">
+            <div  class="card-body">
                 <form method="POST" action="{{ url_for('richiesta') }}">
                     {{ form.hidden_tag() if form else '' }}
 
@@ -41,20 +41,33 @@
                             <div class="card-body">
                                 {% for fascia in fasce %}
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="slot" 
-                                           value="{{ giorno }}_{{ fascia[0] }}-{{ fascia[1] }}" 
+                                    <input class="form-check-input" type="checkbox" name="slot"
+                                           value="{{ giorno }}_{{ fascia[0] }}-{{ fascia[1] }}"
                                            id="{{ giorno }}_slot{{ loop.index0 }}">
                                     <label class="form-check-label" for="{{ giorno }}_slot{{ loop.index0 }}">
                                         {{ fascia[0] }} - {{ fascia[1] }}
                                     </label>
                                 </div>
                                 {% endfor %}
+
+                                <!-- Checkboxes caratteristiche aula per ogni giorno -->
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" name="prese_{{ giorno }}" id="prese_{{ giorno }}">
+                                    <label class="form-check-label" for="prese_{{ giorno }}">Prese</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="pc_{{ giorno }}" id="pc_{{ giorno }}">
+                                    <label class="form-check-label" for="pc_{{ giorno }}">PC</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" name="proiettore_{{ giorno }}" id="proiettore_{{ giorno }}">
+                                    <label class="form-check-label" for="proiettore_{{ giorno }}">Proiettore</label>
+                                </div>
                             </div>
                         </div>
                         {% endfor %}
                     </div>
 
-                    <!-- Pulsante di invio -->
                     <button type="submit" class="btn btn-primary w-100 mt-3">Invia richiesta</button>
                 </form>
             </div>

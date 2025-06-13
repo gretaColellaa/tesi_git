@@ -90,14 +90,9 @@ def richiesta():
 @app.route('/richiesta', methods=['POST'])
 @login_required
 def richiesta_post():
-    # Recupera i dati dal form
     capienza = request.form.get('capienza')
-    raw_slots = request.form.getlist('slot')  # ['Lunedì_08:30-10:00', ...]
-    print(raw_slots)
-
-    # Validazione input
-    if not capienza or not raw_slots:
-        flash("Compilare tutti i campi richiesti!", "error")
+    if not capienza:
+        flash("Inserisci la capienza!", "error")
         return redirect(url_for('richiesta'))
 
     try:
@@ -106,76 +101,143 @@ def richiesta_post():
         flash("La capienza deve essere un numero valido.", "error")
         return redirect(url_for('richiesta'))
 
-    # Conversione da label slot a ID slot
-    slot_ids = []
-    for raw in raw_slots:
+    # Recupera gli slot selezionati dal form
+    raw_slot_values = request.form.getlist('slot')  # es: ['Lunedì_08:30-10:00', 'Martedì_10:00-11:30']
+
+    # Raggruppa gli slot per giorno
+    slots_per_giorno = {}  # es: {'Lunedì': [2, 3], 'Martedì': [5]}
+    for raw in raw_slot_values:
         try:
-            giorno, fascia = raw.split("_")
-            ora_inizio, ora_fine = fascia.split("-")
-            id_slot = slot_dao.get_slot_id_by_label(giorno, ora_inizio, ora_fine)
-            print(giorno, fascia, ora_inizio, ora_fine, id_slot)
+            giorno, fascia = raw.split("_")  # 'Lunedì', '08:30-10:00'
+            ora_inizio, ora_fine = fascia.split("-")  # '08:30', '10:00'
+            id_slot = slot_dao.get_slot_id_by_label(ora_inizio.strip(), ora_fine.strip())
             if id_slot:
-                slot_ids.append(str(id_slot))
+                if giorno not in slots_per_giorno:
+                    slots_per_giorno[giorno] = []
+                slots_per_giorno[giorno].append(str(id_slot))
         except Exception as e:
-            print(f"Errore con lo slot {raw}: {e}")
+            print("Errore parsing slot:", raw, e)
 
-    if not slot_ids:
+    almeno_una_richiesta = False
+
+    for giorno, slot_ids in slots_per_giorno.items():
+        prese = 1 if f"prese_{giorno}" in request.form else 0
+        pc = 1 if f"pc_{giorno}" in request.form else 0
+        proiettore = 1 if f"proiettore_{giorno}" in request.form else 0
+
+        richieste_dao.create_richiesta(
+            idProf=current_user.id,
+            capienza=capienza,
+            slots=slot_ids,
+            giorno=giorno,
+            prese=prese,
+            pc=pc,
+            proiettore=proiettore
+        )
+
+        almeno_una_richiesta = True
+
+    if almeno_una_richiesta:
+        flash("Richieste inserite correttamente!", "success")
+    else:
         flash("Nessuno slot valido selezionato.", "error")
-        return redirect(url_for('richiesta'))
 
-    # Salva nel database
-    richieste_dao.create_richiesta(
-        idProf=current_user.id,
-        capienza=capienza,
-        slots=slot_ids
-    )
-
-    flash("Richiesta inserita correttamente!", "success")
     return redirect(url_for('home'))
+
 
 @app.route('/myaccount')
 @login_required
 def myaccount():
-    # Prende direttamente solo le richieste dell'utente loggato
-    mie_richieste = richieste_dao.get_richieste_by_idProf(current_user.id)
+    if current_user.id != 0:
+        # Prende tutte le richieste del prof attualmente loggato
+        mie_richieste = richieste_dao.get_richieste_by_idProf(current_user.id)
 
-     # Trasformiamo gli slot in descrizione leggibile
-    richieste_con_descrizione = []
-    for richiesta in mie_richieste:
-        # slots è una stringa tipo "2,3,4" --> va splittata
-        slot_ids = [int(s) for s in richiesta['slots'].split(',')]
-        descrizione_slots = slot_dao.get_descrizione_slot_by_ids(slot_ids)
-        richiesta_obj = {
-            'id': richiesta['id'],
-            'capienza': richiesta['capienza'],
-            'slots': descrizione_slots  # qui passo la versione leggibile
-        }
-        richieste_con_descrizione.append(richiesta_obj)
+        # Recupera tutte le assegnazioni
+        assegnazioni = assegnazione_dao.get_assegnazioni()
 
-    return render_template('myaccount.html', richieste=richieste_con_descrizione)
+        richieste_con_dettagli = []
+        for richiesta in mie_richieste:
+            slot_ids = [int(s) for s in richiesta['slots'].split(',')]
+            descrizione_slots = slot_dao.get_descrizione_slot_by_ids(slot_ids)
+
+            # Cerca assegnazione associata
+            aula_assegnata = next((a for a in assegnazioni if a['id_richiesta'] == richiesta['id']), None)
+
+            aula_info = None
+            if aula_assegnata:
+                aula_info = aule_dao.get_aula_by_id(aula_assegnata['id_aula'])
+
+            richieste_con_dettagli.append({
+                'id': richiesta['id'],
+                'capienza': richiesta['capienza'],
+                'giorno': richiesta['giorno'],
+                'slots': descrizione_slots,
+                'prese': richiesta['prese'],
+                'pc': richiesta['pc'],
+                'proiettore': richiesta['proiettore'],
+                'aula': aula_info['id'] if aula_info else None,
+                'capienza_aula': aula_info['capienza'] if aula_info else None,
+                'prese_aula': aula_info['prese'] if aula_info else None,
+                'pc_aula': aula_info['pc'] if aula_info else None,
+                'proiettore_aula': aula_info['proiettore'] if aula_info else None,
+
+                })
+
+        return render_template('myaccount.html', richieste=richieste_con_dettagli)
+    else:
+        flash("Accesso non consentito per l'amministratore.", "danger")
+        return redirect(url_for('home'))
+
 
 
 
 @app.route('/assegna_aule')
 @login_required
 def assegna_aule():
+    if current_user.id !=0:
+        flash("Accesso non consentito", "danger")
+        return redirect(url_for('home'))
+
+
     # Recupera dati
     richieste_rows = richieste_dao.get_richieste()
     aule_rows = aule_dao.get_aule()
     slots_rows = slot_dao.get_all_slots()
 
-    richieste = [] #lista di oggetti di classe Richiesta
+    # Costruisci oggetti Richiesta
+    richieste = []
     for r in richieste_rows:
         slot_ids = [int(s) for s in r['slots'].split(',')] if r['slots'] else []
-        richieste.append(Richiesta(id=r['id'], id_prof=r['idProf'], capienza_richiesta=r['capienza'], slotIds=slot_ids))
+        richieste.append(Richiesta(
+            id=r['id'],
+            id_prof=r['idProf'],
+            capienza_richiesta=r['capienza'],
+            slotIds=slot_ids,
+            giorno=r['giorno'],  # ORA è richiesto
+            prese=r['prese'],
+            pc=r['pc'],
+            proiettore=r['proiettore']
+        ))
 
+    # Costruisci oggetti Aula
     aule = []
     for a in aule_rows:
-        aule.append(Aula(id_aula=a['id'], capienza=a['capienza']))
+        aule.append(Aula(
+            id_aula=a['id'],
+            capienza=a['capienza'],
+            prese=a['prese'],
+            pc=a['pc'],
+            proiettore=a['proiettore']
+        ))
 
+    # Costruisci oggetti Slot
     slots = []
     for s in slots_rows:
-        slots.append(Slot(id=s['id'], giorno=s['giorno'], ora_inizio=s['ora_inizio'], ora_fine=s['ora_fine']))
+        slots.append(Slot(
+            id=s['id'],
+            ora_inizio=s['ora_inizio'],
+            ora_fine=s['ora_fine']
+        ))
 
     # Esegui l'assegnazione avanzata
     assegnazioni, motivazioni = assegna_aule_avanzato(richieste, aule, slots)
@@ -188,7 +250,7 @@ def assegna_aule():
         if id_aula:  # Solo quelle andate a buon fine
             assegnazione_dao.salva_assegnazione(id_richiesta, id_aula)
 
-    # Prepara risultati da mostrare
+    # Prepara risultati per la pagina HTML
     risultati = []
     for richiesta in richieste:
         risultati.append({

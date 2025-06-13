@@ -7,10 +7,14 @@
     <div class="home-dashboard">
         <h2>Benvenuto {{ current_user.nome }}!</h2>
         <p class="lead">Cosa vuoi fare?</p>
-    
-        <a href="{{ url_for('richiesta') }}" class="btn btn-primary">Fai una Nuova Richiesta</a>
-        <a href="{{ url_for('myaccount') }}" class="btn btn-secondary">Visualizza le Tue Richieste</a>
-        <a href="{{ url_for('logout') }}" class="btn btn-danger">Esci</a>
+        {% if current_user.id == 0%}
+            <a href="{{ url_for('assegna_aule') }}" class="btn btn-primary">Assegna aule</a>
+
+        {% else %}
+        <a href="{{ url_for('richiesta') }}" class="btn">Fai una Nuova Richiesta</a>
+        <a href="{{ url_for('myaccount') }}" class="btn">Visualizza le Tue Richieste</a>
+        <a href="{{ url_for('logout') }}" class="btn">Esci</a>
+        {% endif %}
     </div>
     
     {% else %}

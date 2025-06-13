@@ -1,7 +1,7 @@
 import sqlite3
 
-def get_slot_id_by_label(giorno, ora_inizio, ora_fine):
-    giorno = giorno.strip()
+def get_slot_id_by_label( ora_inizio, ora_fine):
+    
     ora_inizio = ora_inizio.strip()
     ora_fine = ora_fine.strip()
 
@@ -11,9 +11,9 @@ def get_slot_id_by_label(giorno, ora_inizio, ora_fine):
 
     sql = """
         SELECT id FROM slot
-        WHERE giorno = ? AND ora_inizio = ? AND ora_fine = ?
+        WHERE  ora_inizio = ? AND ora_fine = ?
     """
-    cursor.execute(sql, (giorno, ora_inizio, ora_fine))
+    cursor.execute(sql, ( ora_inizio, ora_fine))
     row = cursor.fetchone()
 
     cursor.close()
@@ -49,10 +49,10 @@ def get_descrizione_slot_by_ids(slot_ids):
     for slot_id in slot_ids:
         slot = get_slot_by_id(slot_id)
         if slot:
-            giorno = slot['giorno']
+           
             ora_inizio = slot['ora_inizio']
             ora_fine = slot['ora_fine']
-            descrizioni.append(f"{giorno} {ora_inizio}-{ora_fine}")
+            descrizioni.append(f" {ora_inizio}-{ora_fine}")
     return ", ".join(descrizioni)
 
 

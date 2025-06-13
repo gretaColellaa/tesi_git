@@ -48,22 +48,18 @@ def get_richieste_by_idProf(idProf):
     return richieste
 
 
-def create_richiesta(idProf, capienza, slots):
-    """
-    Crea una nuova richiesta nel database.
-    :param idProf: ID del professore
-    :param capienza: capienza richiesta (int)
-    :param slots: lista di ID slot (int o str) da associare alla richiesta
-    """
-    # Converti in stringa da salvare (es: "3,5,6")
+def create_richiesta(idProf, capienza, slots, giorno, prese, pc, proiettore):
     slot_str = ",".join(map(str, slots))
 
     conn = sqlite3.connect('db/assegnaAule.db')
     cursor = conn.cursor()
 
     try:
-        sql = "INSERT INTO richiesta (idProf, capienza, slots) VALUES (?, ?, ?)"
-        cursor.execute(sql, (idProf, capienza, slot_str))
+        sql = """
+            INSERT INTO richiesta (idProf, capienza, slots, giorno, prese, pc, proiettore)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """
+        cursor.execute(sql, (idProf, capienza, slot_str, giorno, prese, pc, proiettore))
         conn.commit()
     except Exception as e:
         print("Errore inserimento richiesta:", e)
@@ -71,5 +67,7 @@ def create_richiesta(idProf, capienza, slots):
     finally:
         cursor.close()
         conn.close()
+
+
 
 
