@@ -10,6 +10,47 @@
         {% if current_user.id == 0%}
             <a href="{{ url_for('assegna_aule') }}" class="btn btn-primary">Assegna aule</a>
 
+            {% if richieste_admin %}
+<div class="container mt-4">
+    <h2 class="text-center">Tutte le Richieste</h2>
+    <table class="table table-bordered table-hover table-striped bg-light-subtle">
+
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Professore</th>
+                <th>Capienza</th>
+                <th>Giorno</th>
+                <th>Slot</th>
+                <th>Prese</th>
+                <th>PC</th>
+                <th>Proiettore</th>
+                <th>Aula Assegnata</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in richieste_admin %}
+            <tr>
+                <td>{{ r.id }}</td>
+                <td>{{ r.professore }}</td>
+                <td>{{ r.capienza }}</td>
+                <td>{{ r.giorno }}</td>
+                <td>{{ r.slots }}</td>
+                <td>{{ 'Sì' if r.prese else 'No' }}</td>
+                <td>{{ 'Sì' if r.pc else 'No' }}</td>
+                <td>{{ 'Sì' if r.proiettore else 'No' }}</td>
+                <td>{{ r.aula }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="container mt-4">
+    <h4 class="text-center">Nessuna richiesta presente.</h4>
+</div>
+{% endif %}
+
         {% else %}
         <a href="{{ url_for('richiesta') }}" class="btn">Fai una Nuova Richiesta</a>
         <a href="{{ url_for('myaccount') }}" class="btn">Visualizza le Tue Richieste</a>

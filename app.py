@@ -27,7 +27,35 @@ login_manager.init_app(app)
 
 @app.route('/')
 def home():
+    if current_user.is_authenticated and current_user.id == 0:
+        richieste = richieste_dao.get_richieste()
+        assegnazioni = assegnazione_dao.get_assegnazioni()
+
+        richieste_admin = []
+        for richiesta in richieste:
+            slot_ids = [int(s) for s in richiesta['slots'].split(',')] if richiesta['slots'] else []
+            slot_descrizione = slot_dao.get_descrizione_slot_by_ids(slot_ids)
+            aula_assegnata = next((a for a in assegnazioni if a['id_richiesta'] == richiesta['id']), None)
+            aula = aule_dao.get_aula_by_id(aula_assegnata['id_aula']) if aula_assegnata else None
+
+            prof = users_dao.get_user_by_id(richiesta['idProf'])
+
+            richieste_admin.append({
+                'id': richiesta['id'],
+                'professore': f"{prof['nome']} {prof['cognome']}" if prof else "Sconosciuto",
+                'capienza': richiesta['capienza'],
+                'giorno': richiesta['giorno'],
+                'slots': slot_descrizione,
+                'prese': richiesta['prese'],
+                'pc': richiesta['pc'],
+                'proiettore': richiesta['proiettore'],
+                'aula': aula['id'] if aula else "Non assegnata"
+            })
+
+        return render_template('home.html', richieste_admin=richieste_admin)
+    
     return render_template('home.html')
+
 
 @app.route('/login', methods=['POST'])
 def login():

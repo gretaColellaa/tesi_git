@@ -18,25 +18,35 @@
 
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg bg-body-tertiary">
-          <div  class="container-fluid">
-            <h1 class="display-5">AssegnaAule</h1>
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">AssegnaAule</a>
 
-              <div class="navbar-nav">
-                <a class="nav-link" href="{{ url_for('home') }}">Home</a>
-                    
-                {% if current_user.is_authenticated %}
-                {% if  current_user.id != 0 %}
-                    <a class="nav-link" href="{{ url_for('richiesta') }}">Fai una Richiesta</a>
-                    <a class="nav-link" href="{{ url_for('myaccount') }}">Profilo</a>
-                {% endif %}
-                    <a class="nav-link" href="{{ url_for('visualizza_assegnazioni') }}">Visualizza Assegnazioni</a>
-                    <a class="nav-link" href="{{ url_for('logout') }}">Esci</a>
-                {% endif %}
-              </div>
-            </div>
-          </div>
-        </nav>
+    <!-- Bottone toggle per mobile -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Contenitore voci di menu -->
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+        <a class="nav-link" href="{{ url_for('richiesta') }}">Richiesta</a>
+        <a class="nav-link" href="{{ url_for('myaccount') }}">Profilo</a>
+        {% if current_user.is_authenticated and current_user.id == 0 %}
+          <a class="nav-link" href="{{ url_for('assegna_aule') }}">Assegna Aule</a>
+          <a class="nav-link" href="{{ url_for('visualizza_assegnazioni') }}">Visualizza Assegnazioni</a>
+        {% endif %}
+        {% if current_user.is_authenticated %}
+          <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+          <a class="nav-link" href="{{ url_for('signup') }}">Registrati</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
+
 
         <!-- Corpo principale -->
         <main class="content container my-4">
