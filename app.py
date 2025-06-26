@@ -168,9 +168,9 @@ def richiesta_post():
     if almeno_una_richiesta:
         flash("Richieste inserite correttamente!", "success")
     else:
-        flash("Nessuno slot valido selezionato.", "error")
+        flash("Nessuno slot valido selezionato.", "danger")
 
-    return redirect(url_for('home'))
+    return redirect(url_for('richiesta'))
 
 
 @app.route('/myaccount')
